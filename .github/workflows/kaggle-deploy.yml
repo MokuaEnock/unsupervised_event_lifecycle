@@ -1,0 +1,35 @@
+name: Deploy to Kaggle
+
+# Trigger the workflow on pushes to the master/main branch
+on:
+  push:
+    branches:
+      - master
+      - main
+  # Allow manual triggering from the GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Kaggle API
+        run: pip install kaggle
+
+      - name: Make Deployment Script Executable
+        run: chmod +x deploy_to_kaggle.sh
+
+      - name: Execute Kaggle Deployment
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: ./deploy_to_kaggle.sh
